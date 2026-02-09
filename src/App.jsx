@@ -6,12 +6,12 @@ import Documents from './components/Documents'
 import Communications from './components/Communications'
 import {
   loadUniversities,
-  loadDocuments,
   loadCommunications,
   saveUniversities,
-  saveDocuments,
-  saveCommunications
-} from './data/database'
+  saveCommunications,
+  subscribeToUniversities,
+  DOCUMENT_TYPES  // ✅ ADD THIS
+} from './data/database';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -19,11 +19,32 @@ function App() {
   const [communications, setCommunications] = useState([]);
   const [selectedUniversity, setSelectedUniversity] = useState(null);
   const [showAddUniversity, setShowAddUniversity] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setUniversities(loadUniversities());
-    setCommunications(loadCommunications());
-  }, []);
+  let unsubscribe;
+
+  const initializeData = async () => {
+    const universitiesData = await loadUniversities();
+    const communicationsData = await loadCommunications();
+
+    setUniversities(universitiesData);
+    setCommunications(communicationsData);
+    setLoading(false);
+
+    unsubscribe = subscribeToUniversities((updatedUniversities) => {
+      console.log('🔄 Real-time update received!');
+      setUniversities(updatedUniversities);
+    });
+  };
+
+  initializeData();
+
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
+}, []);
+  
 
   // Update selectedUniversity when universities array changes
   useEffect(() => {
@@ -64,38 +85,39 @@ function App() {
   };
 
   // Add new university
-  const addUniversity = (newUniData) => {
-    const newId = Math.max(...universities.map(u => u.id), 0) + 1;
-    const newUniversity = {
-      id: newId,
-      name: newUniData.name,
-      city: newUniData.city,
-      specialty: newUniData.specialty,
-      fees: newUniData.fees,
-      ielts: newUniData.ielts || '6.0',
-      duolingo: newUniData.duolingo || '105',
-      intake: newUniData.intake || 'September 2026',
-      deadline: newUniData.deadline || 'Rolling admissions',
-      depositAmount: newUniData.depositAmount || '£2,500',
-      link: newUniData.link || '',
-      status: 'not-applied',
-      documents: loadDocuments().map(doc => ({
-        id: doc.id,
-        completed: false,
-        uploadedDate: null,
-        notes: ""
-      })),
-      notes: "",
-      casReceived: false,
-      depositPaid: false,
-      visaApplied: false
-    };
-    
-    const updated = [...universities, newUniversity];
-    setUniversities(updated);
-    saveUniversities(updated);
-    setShowAddUniversity(false);
+ 
+const addUniversity = (newUniData) => {
+  const newId = Math.max(...universities.map(u => u.id), 0) + 1;
+  const newUniversity = {
+    id: newId,
+    name: newUniData.name,
+    city: newUniData.city,
+    specialty: newUniData.specialty,
+    fees: newUniData.fees,
+    ielts: newUniData.ielts || '6.0',
+    duolingo: newUniData.duolingo || '105',
+    intake: newUniData.intake || 'September 2026',
+    deadline: newUniData.deadline || 'Rolling admissions',
+    depositAmount: newUniData.depositAmount || '£5,500',
+    link: newUniData.link || '',
+    status: 'not-applied',
+    documents: DOCUMENT_TYPES.map(doc => ({  // ✅ FIXED
+      id: doc.id,
+      completed: false,
+      uploadedDate: null,
+      notes: ""
+    })),
+    notes: "",
+    casReceived: false,
+    depositPaid: false,
+    visaApplied: false
   };
+  
+  const updated = [...universities, newUniversity];
+  setUniversities(updated);
+  saveUniversities(updated);
+  setShowAddUniversity(false);
+};
 
   // Document Handlers
   const toggleDocument = (universityId, docId) => {
@@ -147,6 +169,22 @@ function App() {
     setCommunications(updated);
     saveCommunications(updated);
   };
+if (loading) {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      color: 'white',
+      fontSize: '24px',
+      fontWeight: '700'
+    }}>
+      🔄 Loading your universities...
+    </div>
+  );
+}
 
   return (
     <div className="app">

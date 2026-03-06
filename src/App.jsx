@@ -7,7 +7,7 @@ import Communications from './components/Communications'
 import Journey from './components/Journey'
 import Profile from './components/Profile'
 import MyUniversity from './components/MyUniversity'
-import AccessGate from './components/AccessGate'
+import AccessGate from './components/Accessgate'
 import AdminPanel from './components/AdminPanel'
 import {
   loadUniversities,
@@ -352,8 +352,8 @@ function App() {
       </div>
 
       <footer className="footer">
-        <p>Built by <strong>Said Abdelaziz</strong> - <i>Creative Web Developer</i> </p>
-        {/* <p>Built by <strong>Said Abdelaziz</strong> for AIMS Education</p> */}
+        {/* <p>Built by <strong>Said Abdelaziz</strong> - <i>Creative Web Developer</i> </p> */}
+        <p>Built by <strong>Said Abdelaziz</strong> for AIMS Education</p>
       </footer>
     </div>
   );

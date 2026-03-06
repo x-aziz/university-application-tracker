@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAllAccessCodes, createAccessCode, toggleCodeStatus } from '../data/database';
 
-export default function AdminPanel() {
+export default function Adminpanel() {
   const [authenticated, setAuthenticated] = useState(false);
   const [codes, setCodes] = useState([]);
   const [loading, setLoading] = useState(false);

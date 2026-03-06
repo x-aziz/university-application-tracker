@@ -1,6 +1,6 @@
-import { calculateOverallProgress } from '../data/database';
+import { calculateOverallProgress, calculateJourneyProgress } from '../data/database';
 
-export default function StatsBar({ universities }) {
+export default function StatsBar({ universities, journeyData }) {
   if (!universities || universities.length === 0) {
     return null; // Don't show stats if no data loaded yet
   }
@@ -10,13 +10,15 @@ export default function StatsBar({ universities }) {
   const submittedCount = universities.filter(u => u.status === 'submitted').length;
   const acceptedCount = universities.filter(u => u.status === 'accepted').length;
   const documentProgress = calculateOverallProgress(universities);
+  const journeyProgress = journeyData ? calculateJourneyProgress(journeyData) : 0;
 
   const stats = [
     { label: 'Total Universities', value: totalUniversities, icon: '🏛️', color: 'blue' },
     { label: 'In Progress', value: appliedCount, icon: '⏳', color: 'yellow' },
     { label: 'Submitted', value: submittedCount, icon: '✉️', color: 'purple' },
     { label: 'Accepted', value: acceptedCount, icon: '🎉', color: 'green' },
-    { label: 'Documents Ready', value: `${documentProgress}%`, icon: '📄', color: 'orange' }
+    { label: 'Documents Ready', value: `${documentProgress}%`, icon: '📄', color: 'orange' },
+    { label: 'Journey Progress', value: `${journeyProgress}%`, icon: '🗺️', color: 'blue' }
   ];
 
   return (

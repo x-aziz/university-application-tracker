@@ -8,7 +8,7 @@ import Journey from './components/Journey'
 import Profile from './components/Profile'
 import MyUniversity from './components/MyUniversity'
 import AccessGate from './components/Accessgate'
-import AdminPanel from './components/AdminPanel'
+import AdminPanel from './components/Adminpanel'
 import {
   loadUniversities,
   loadCommunications,

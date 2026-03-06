@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { validateAccessCode } from '../data/database';
 
-export default function AccessGate({ onSuccess }) {
+export default function Accessgate({ onSuccess }) {
   const [formData, setFormData] = useState({
     name: '',
     code: ''
